@@ -1,98 +1,121 @@
-<!-- src/layouts/MainLayout.vue -->
 <template>
-  <div class="main-layout">
-    <!-- 顶部导航 -->
-    <header class="header">
-      <nav>
-        <router-link to="/">Home</router-link>
-        <router-link to="/about">About</router-link>
-      </nav>
-    </header>
-
-    <!-- 侧边栏 -->
-    <aside class="sidebar" v-if="showSidebar">
-      <div class="sidebar-content">
-        <router-link 
-          v-for="menu in menus" 
-          :key="menu.path" 
-          :to="menu.path"
-        >
-          {{ menu.title }}
-        </router-link>
-      </div>
-    </aside>
-
-    <!-- 页面内容区 -->
-    <main class="content">
-      <router-view v-slot="{ Component }">
-        <!-- 保持页面状态缓存 -->
-        <keep-alive :include="cachedViews">
-          <component :is="Component" />
-        </keep-alive>
-      </router-view>
-    </main>
-
-    <!-- 底部信息 -->
-    <footer class="footer">
-      <p>&copy; 2024 My Application</p>
-    </footer>
-  </div>
+  <el-container class="layout-container">
+    <el-aside width="200px">
+      <el-menu
+        :default-active="activeMenu"
+        class="el-menu-vertical"
+        router
+      >
+        <el-menu-item index="/admission">
+          <el-icon><Document /></el-icon>
+          <span>入院登记</span>
+        </el-menu-item>
+        <el-menu-item index="/ward">
+          <el-icon><Notebook /></el-icon>
+          <span>开立医嘱</span>
+        </el-menu-item>
+        <el-menu-item index="/nursing">
+          <el-icon><FirstAidKit /></el-icon>
+          <span>医嘱执行</span>
+        </el-menu-item>
+        <el-menu-item index="/examination">
+          <el-icon><Files /></el-icon>
+          <span>检验结果录入</span>
+        </el-menu-item>
+        <el-menu-item index="/prescription">
+          <el-icon><List /></el-icon>
+          <span>处方查询</span>
+        </el-menu-item>
+        <el-menu-item index="/discharge">
+          <el-icon><Right /></el-icon>
+          <span>出院登记</span>
+        </el-menu-item>
+      </el-menu>
+    </el-aside>
+    
+    <el-container>
+      <el-header height="60px">
+        <div class="header-content">
+          <h2>医院住院管理系统</h2>
+          <div class="user-info">
+            <el-dropdown>
+              <span class="user-dropdown">
+                管理员 <el-icon><ArrowDown /></el-icon>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>个人信息</el-dropdown-item>
+                  <el-dropdown-item>退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </div>
+      </el-header>
+      
+      <el-main>
+        <router-view></router-view>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      showSidebar: true,
-      cachedViews: ['Home'], // 需要缓存的组件名
-      menus: [
-        { path: '/dashboard', title: '仪表盘' },
-        { path: '/users', title: '用户管理' },
-        { path: '/settings', title: '系统设置' }
-      ]
-    };
-  }
-};
+<script setup>
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import {
+  Document,
+  Notebook,
+  FirstAidKit,
+  Files,
+  List,
+  Right,
+  ArrowDown
+} from '@element-plus/icons-vue'
+
+const route = useRoute()
+const activeMenu = computed(() => route.path)
 </script>
 
 <style scoped>
-.main-layout {
-  display: grid;
-  grid-template-areas:
-    "header header"
-    "sidebar content"
-    "footer footer";
-  grid-template-columns: 240px 1fr;
-  grid-template-rows: 60px 1fr 80px;
-  min-height: 100vh;
+.layout-container {
+  height: 100vh;
 }
 
-.header {
-  grid-area: header;
-  background: #2c3e50;
+.el-aside {
+  background-color: #304156;
+  color: #fff;
+}
+
+.el-menu-vertical {
+  border-right: none;
+}
+
+.el-header {
+  background-color: #fff;
+  border-bottom: 1px solid #dcdfe6;
   padding: 0 20px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+
+.user-info {
+  cursor: pointer;
+}
+
+.user-dropdown {
   display: flex;
   align-items: center;
+  color: #606266;
 }
 
-.sidebar {
-  grid-area: sidebar;
-  background: #34495e;
-  color: white;
-  padding: 20px;
-}
-
-.content {
-  grid-area: content;
-  padding: 20px;
-  background: #f5f6f8;
-}
-
-.footer {
-  grid-area: footer;
-  background: #2c3e50;
-  color: white;
-  text-align: center;
+.el-main {
+  background-color: #f0f2f5;
   padding: 20px;
 }
 </style>

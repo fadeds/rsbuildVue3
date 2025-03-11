@@ -32,11 +32,13 @@ export function generateRoutes() {
  
 
   // // 返回根路由数组
-  // return [{
-  //   path: '/',
-  //   component: () => import('@/layouts/MainLayout.vue'),
-  //   children: nestedRoutes
-  // }];
-  return routes;
+  return [
+    {
+      path: "/",
+      component: () => import("@/layouts/MainLayout.vue"),
+      children: routes,
+    },
+  ]
+  // return routes;
   
 }
