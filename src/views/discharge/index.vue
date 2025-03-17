@@ -37,6 +37,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import {getList,save,deleteData,update,info } from '@/api/dictionary.js'
 
 const searchForm = ref({
   hospitalNo: '',

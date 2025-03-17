@@ -8,7 +8,7 @@
       <el-form :model="form" label-width="100px" class="ward-form">
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="病历号">
+            <el-form-item label="档案号">
               <el-input v-model="form.patientId" />
             </el-form-item>
           </el-col>

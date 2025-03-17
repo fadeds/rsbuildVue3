@@ -8,7 +8,7 @@
       <el-form :model="form" label-width="100px" class="examination-form">
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="病历号">
+            <el-form-item label="档案号">
               <el-input v-model="form.patientId" />
             </el-form-item>
           </el-col>
@@ -25,7 +25,7 @@
         </el-row>
 
         <el-table :data="examList" style="width: 100%; margin-top: 20px">
-          <el-table-column prop="examNo" label="病历号" width="120" />
+          <el-table-column prop="examNo" label="档案号" width="120" />
           <el-table-column prop="name" label="姓名" width="120" />
           <el-table-column prop="result" label="规格" width="120" />
           <el-table-column prop="resultStatus" label="是否完成" width="120" />

@@ -7,7 +7,7 @@
         </div>
         <el-table :data="patientList" style="width: 100%; height: calc(100vh - 180px)">
           <el-table-column prop="hospitalNo" label="住院号" />
-          <el-table-column prop="patientId" label="病历号" />
+          <el-table-column prop="patientId" label="档案号" />
           <el-table-column prop="name" label="姓名" />
           <el-table-column prop="bedNo" label="科室" />
           <el-table-column prop="status" label="是否在院" />

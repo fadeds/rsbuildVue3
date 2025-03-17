@@ -3,10 +3,8 @@
     <el-aside width="400px">
       <PatientList @select="handlePatientSelect" />
     </el-aside>
-    
     <el-main>
       <PatientInfo :patient-info="currentPatient" />
-
       <div class="order-content">
         <el-table 
           :data="orderList" 

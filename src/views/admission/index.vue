@@ -8,39 +8,50 @@
       <el-form :model="form" label-width="100px" class="admission-form">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="病历号">
-              <el-input v-model="form.patientId" />
+            <el-form-item label="档案号">
+              <el-input v-model="form.patientNo" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="姓名">
-              <el-input v-model="form.name" />
+              <el-input v-model="form.patientName" />
             </el-form-item>
           </el-col>
         </el-row>
-
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="性别">
+              <el-input v-model="form.sex" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="证件号">
+              <el-input v-model="form.cardNo" />
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="诊断">
-              <el-input v-model="form.diagnosis" />
+              <el-input v-model="form.extend" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="床位号">
-              <el-input v-model="form.bedNumber" />
+              <el-input v-model="form.bedNo" />
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="联系史">
+            <el-form-item label="过敏史">
               <el-input v-model="form.contactHistory" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="既往史">
-              <el-input v-model="form.medicalHistory" />
+              <el-input v-model="form.history" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -59,8 +70,8 @@
         </el-row>
 
         <el-form-item>
-          <el-button type="primary" @click="handleSubmit">住院登记</el-button>
-          <el-button @click="resetForm">返回</el-button>
+          <el-button type="primary" @click="handleSubmit">保存信息</el-button>
+          <el-button @click="resetForm">清 空</el-button>
         </el-form-item>
       </el-form>
     </el-main>
@@ -69,7 +80,7 @@
 
 <script setup>
 import { ref } from 'vue'
-// import PatientList from '@/components/PatientList.vue'
+import {inHospital} from '@/api/admission'
 
 const patientListRef = ref(null)
 
@@ -84,8 +95,25 @@ const form = ref({
   doctor: ''
 })
 
-const handleSubmit = () => {
-  // 实现提交逻辑
+const handleSubmit = async () => {
+  let params = {
+    inHospital:{
+      ...form.value
+    },
+    patientInfo: {
+      ...form.value
+    }
+  }
+  try{
+    const res = await inHospital(params)
+    if(res.code === 200){
+      ElMessage.success('保存成功')
+      patientListRef.value.getList()
+      resetForm()
+    }
+  }catch(e){
+    console.log(e)
+  }
 }
 
 const resetForm = () => {

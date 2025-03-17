@@ -34,27 +34,27 @@ export default defineConfig(({ env, command, envMode }) => {
           AutoImport({
             resolvers: [
               ElementPlusResolver({
-                importStyle: 'sass',
+                importStyle: "sass",
               }),
             ],
             dts: false,
-            imports: ['vue', 'vue-router', 'pinia'],
+            imports: ["vue", "vue-router", "pinia"],
             biomelintrc: {
               // 已存在文件设置默认 false，需要更新时再打开，防止每次更新都重新生成
               enabled: false,
               // 生成文件地址和名称
-              filepath: './.biomelintrc-auto-import.json', // Default `./.biomelintrc-auto-import.json`
+              filepath: "./.biomelintrc-auto-import.json", // Default `./.biomelintrc-auto-import.json`
             },
           }),
           AutoComponents({
             // 自动加载组件的目录配置,默认的为 'src/components'
-            dirs: ['src/components'],
+            dirs: ["src/components"],
             // 组件支持的文件后缀名
-            extensions: ['vue', 'jsx', 'tsx'],
+            extensions: ["vue", "jsx", "tsx"],
             dts: false,
             resolvers: [
               ElementPlusResolver({
-                importStyle: 'sass',
+                importStyle: "sass",
               }),
             ],
           }),
@@ -63,21 +63,21 @@ export default defineConfig(({ env, command, envMode }) => {
     },
     source: {
       entry: {
-        index: './src/index.js',
+        index: "./src/index.js",
       },
       // 路径别名
       alias: {
-        '@': './src',
+        "@": "./src",
       },
     },
     output: {
-      assetPrefix: 'auto',
-      target: 'web', // 默认 environment
-      polyfill: 'usage', // polyfill 设置，具体请参照官网
+      assetPrefix: "auto",
+      target: "web", // 默认 environment
+      polyfill: "usage", // polyfill 设置，具体请参照官网
       minify: true, // 默认在生产模式下压缩 js css
-      cleanDistPath: env === 'production',
+      cleanDistPath: env === "production",
       // 使用默认值
-      // sourceMap: true, 
+      // sourceMap: true,
     },
     dev: {
       lazyCompilation: true, // 开发模式启动，按需编译
@@ -86,10 +86,14 @@ export default defineConfig(({ env, command, envMode }) => {
     server: {
       open: true,
       port: 1234,
-      htmlFallback: 'index', // 默认情况下，当请求满足以下条件且未找到对应资源时，会回退到 index.html
-      // proxy: {
-      //   '/api': 'http://localhost:3000',
-      // },
+      htmlFallback: "index", // 默认情况下，当请求满足以下条件且未找到对应资源时，会回退到 index.html
+      proxy: {
+        "/app": {
+          target: "http://47.92.117.5:8080/renren-fast/",
+          changeOrigin: true,
+          // rewrite: (path) => path.replace(/^\/api/, "/app"),
+        },
+      },
     },
     // html: {
     //   // 设置页面 title
@@ -99,7 +103,7 @@ export default defineConfig(({ env, command, envMode }) => {
     performance: {
       // 代码分割配置
       chunkSplit: {
-        strategy: 'split-by-experience',
+        strategy: "split-by-experience",
         // strategy: 'split-by-size',
         // minSize: 30000,
         // maxSize: 500000,
@@ -107,5 +111,5 @@ export default defineConfig(({ env, command, envMode }) => {
       removeConsole: true, // 生产模式构建时，是否自动移除代码中所有的 console.[methodName]
       bundleAnalyze: {}, // 开启分析产物体积，生成 ./dist/report-web.html 文件
     },
-  };
+  }
 });

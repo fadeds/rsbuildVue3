@@ -30,6 +30,10 @@
           <el-icon><Right /></el-icon>
           <span>出院登记</span>
         </el-menu-item>
+        <el-menu-item index="/dictionary">
+          <el-icon><Right /></el-icon>
+          <span>字典表维护</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     
@@ -117,5 +121,8 @@ const activeMenu = computed(() => route.path)
 .el-main {
   background-color: #f0f2f5;
   padding: 20px;
+}
+.el-main>div{
+  background-color: #fff;
 }
 </style>
