@@ -15,3 +15,8 @@ export const inHospital = (params) => {
 export const exeNursing = (params) => {
   return request.post("/app/zy/bu/exe", params)
 }
+
+// 医嘱停止
+export const stopNursing = (params) => {
+  return request.post("/app/zy/adviceinfo/stop", params)
+}

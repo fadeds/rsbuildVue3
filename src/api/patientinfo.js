@@ -15,3 +15,6 @@ export const update = (params) => {
 export const deleteData = (params) => {
   return request.post("/app/zy/patientinfo/delete", params)
 }
+export const getHospitalList = (params) => {
+  return request.post("/app/zy/bu/inHospitalList", params)
+}

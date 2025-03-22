@@ -30,6 +30,7 @@
       <el-table-column type="selection" width="55" />
       <el-table-column prop="id" label="字典编号"  />
       <el-table-column prop="name" label="字典名称" />
+      <el-table-column prop="code" label="字典编码" />
       <el-table-column prop="typeName" label="字典类型" />
       <el-table-column prop="codeType" label="类型编码" />
       <el-table-column label="操作" width="250">
@@ -67,8 +68,14 @@
         <el-form-item label="字典名称" prop="name">
           <el-input v-model="dictForm.name" placeholder="请输入字典名称" />
         </el-form-item>
+        <el-form-item label="字典编码" prop="code">
+          <el-input v-model="dictForm.code" placeholder="请输入字典编码" />
+        </el-form-item>
         <el-form-item label="字典类型" prop="typeName">
-          <el-input v-model="dictForm.typeName" :disabled="dialogType !== 'add'" placeholder="请输入字典类型" />
+          <el-input v-model="dictForm.typeName" placeholder="请输入字典类型" />
+        </el-form-item>
+        <el-form-item label="类型编码" prop="codeType">
+          <el-input v-model="dictForm.codeType" placeholder="请输入类型编码" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -88,7 +95,9 @@ import {getList,save,deleteData,update,info } from '@/api/dictionary.js'
 // 搜索表单
 const searchForm = reactive({
   name: '',
-  typeName: ''
+  typeName: '',
+  code:'',
+  codeType:''
 })
 
 // 表格数据
@@ -109,11 +118,15 @@ const dictForm = reactive({
   typeName: '',
   type: '',
   status: '1',
-  description: ''
+  description: '',
+  code:'',
+  codeType:''
 })
 const dictRules = {
   name: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
-  typeName: [{ required: true, message: '请输入字典类型', trigger: 'blur' }]
+  typeName: [{ required: true, message: '请输入字典类型', trigger: 'blur' }],
+  code: [{ required: true, message: '请输入字典编码', trigger: 'blur' }],
+  codeType: [{ required: true, message: '请输入类型编码', trigger: 'blur' }]
 }
 
 // 字典项相关
@@ -149,8 +162,16 @@ const initList = () => {
     name: searchForm.name,
     typeName: searchForm.typeName
   }).then(response => {
-    console.log(response)
     const { result } = response
+    const groupedData = result.reduce((acc, curr) => {
+      const { typeName } = curr
+      if (!acc[typeName]) {
+        acc[typeName] = []
+      }
+      acc[typeName].push(curr)
+      return acc
+    }, {})
+    localStorage.setItem('dicOption',JSON.stringify(groupedData))
     tableData.value = result
     loading.value = false
   })
@@ -212,11 +233,11 @@ const handleDelete = (row) => {
     type: 'warning'
   }).then(() => {
     // 这里替换为实际的API调用
-    deleteData({ids:[row.id]}).then(()=>{
+    deleteData([`${row.id}`]).then(()=>{
       ElMessage.success('删除成功')
       initList()
     })
-  }).catch(() => {})
+  })
 }
 
 // 批量删除
@@ -232,8 +253,10 @@ const handleBatchDelete = () => {
     type: 'warning'
   }).then(() => {
     // 这里替换为实际的API调用
-    ElMessage.success('批量删除成功')
-    initList()
+    deleteData(selectedRows.value.map(item => item.id)).then(()=>{
+      ElMessage.success('批量删除成功')
+      initList()
+    })
   }).catch(() => {})
 }
 
@@ -243,8 +266,9 @@ const submitForm = () => {
   dictFormRef.value.validate((valid) => {
     if (valid) {
       // 这里替换为实际的API调用
-        func(dictForm).then(()=>{
-          ElMessage.success('新增成功')
+        func(dictForm).then((res)=>{
+          dialogVisible.value = false
+          ElMessage.success(dialogType.value === 'add'? '新增成功' : '修改成功')
           initList()
         })
     }

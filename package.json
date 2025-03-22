@@ -15,10 +15,12 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@iconify/json": "^2.2.318",
     "@rsbuild/core": "^1.2.11",
     "@rsbuild/plugin-sass": "^1.2.2",
     "@rsbuild/plugin-vue": "^1.0.5",
     "unplugin-auto-import": "^19.1.0",
+    "unplugin-icons": "^22.1.0",
     "unplugin-vue-components": "^28.4.0"
   }
 }

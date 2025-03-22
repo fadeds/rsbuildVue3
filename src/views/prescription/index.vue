@@ -1,18 +1,7 @@
 <template>
   <el-container>
     <el-aside width="400px">
-      <div class="patient-list">
-        <div class="search-bar">
-          <el-input v-model="searchKey" placeholder="住院号" style="width: 200px" />
-        </div>
-        <el-table :data="patientList" style="width: 100%; height: calc(100vh - 180px)">
-          <el-table-column prop="hospitalNo" label="住院号" />
-          <el-table-column prop="patientId" label="档案号" />
-          <el-table-column prop="name" label="姓名" />
-          <el-table-column prop="bedNo" label="科室" />
-          <el-table-column prop="status" label="是否在院" />
-        </el-table>
-      </div>
+      <PatientList @selectPatient="handlePatientSelect" />
     </el-aside>
 
     <el-main>
@@ -21,20 +10,37 @@
           :data="prescriptionList" 
           style="width: 100%"
           :border="true"
-          height="calc(100vh - 100px)"
         >
-          <el-table-column type="index" width="50" />
           <el-table-column prop="prescriptionNo" label="处方号" width="120" />
-          <el-table-column prop="medicineName" label="药品名称" width="150" />
-          <el-table-column prop="specification" label="规格" width="120" />
-          <el-table-column prop="dosage" label="用量" width="100" />
-          <el-table-column prop="frequency" label="频次" width="100" />
-          <el-table-column prop="route" label="用药途径" width="120" />
-          <el-table-column prop="duration" label="用药天数" width="100" />
-          <el-table-column prop="totalAmount" label="总量" width="100" />
-          <el-table-column prop="status" label="状态" width="100" />
-          <el-table-column prop="doctor" label="开方医生" width="120" />
-          <el-table-column prop="createTime" label="开方时间" width="160" />
+          <el-table-column prop="itemType" label="项目类型" width="120" >
+            <template #default="scope">
+              {{scope.row.itemType&&dicOption.项目类型.find(item => item.code == scope.row.itemType)?.name}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="itemName" label="诊疗项目" width="120" >
+            <template #default="scope">
+              {{scope.row.itemCode&&drugOption.find(item => item.drugCode == scope.row.itemCode)?.drugName}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="itemCode" label="诊疗编码" width="120" />
+          <el-table-column prop="prescriptionTime" label="处方日期" width="120" />
+          <el-table-column prop="dose" label="用量" width="100" />
+          <el-table-column prop="usageCode" label="用法" width="100">
+            <template #default="scope">
+              {{scope.row.usageCode&&dicOption.用法.find(item => item.code == scope.row.usageCode)?.name}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="frequency" label="频次" width="100">
+            <template #default="scope">
+              {{scope.row.frequency&&dicOption.频次.find(item => item.code == scope.row.frequency)?.name}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="unit" label="规格" width="120" />
+          <el-table-column prop="itemResult" label="检查结果" width="120" />
+          <el-table-column prop="referValue" label="参考值" width="100" />
+          <el-table-column prop="count" label="数量" width="100" />
+          <el-table-column prop="price" label="单价" width="100" />
+          <!-- <el-table-column prop="totalPrice" label="总价" width="100" /> -->
         </el-table>
       </div>
     </el-main>
@@ -42,29 +48,44 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {getList,deleteData,info } from '@/api/prescription'
+import { druglist } from '@/api/ward'
 
-const searchKey = ref('')
-const patientList = ref([])
 const prescriptionList = ref([])
-
+const drugOption = ref({})      
+const dicOption = JSON.parse(localStorage.getItem('dicOption'))
 // 搜索患者
-const handleSearch = () => {
+const handlePatientSelect = (row) => {
   // 实现搜索逻辑
+  console.log(row)
+  getPrescriptionList(row.zyh)
 }
 
 // 获取处方列表
-const getPrescriptionList = (patientId) => {
+const getPrescriptionList = async(zyh) => {
   // 实现获取处方列表逻辑
+  let res = await getList({zyh})
+  if(res.code == 0){
+    prescriptionList.value = res.rows
+  }
 }
+onMounted(()=>{
+  // getPrescriptionList()
+  getList({}).then(res=>{
+    console.log(res.rows)
+  })
+  druglist({}).then(res=>{
+    drugOption.value = res.data
+  })
+})
 </script>
 
 <style scoped>
-.patient-list {
+/* .patient-list {
   padding: 20px;
   height: 100%;
   background-color: #fff;
-}
+} */
 
 .search-bar {
   margin-bottom: 20px;

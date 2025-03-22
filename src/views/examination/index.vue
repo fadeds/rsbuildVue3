@@ -1,67 +1,94 @@
 <template>
   <el-container>
     <el-aside width="400px">
-      <PatientList ref="patientListRef" />
+      <!-- <PatientList ref="patientListRef" /> -->
+      <PrescriptionList @selectPatient="handlePatientSelect" />
     </el-aside>
     
     <el-main>
       <el-form :model="form" label-width="100px" class="examination-form">
         <el-row :gutter="20">
-          <el-col :span="8">
-            <el-form-item label="档案号">
-              <el-input v-model="form.patientId" />
+          <el-col :span="12">
+            <el-form-item label="住院号">
+               {{ form.zyh }}
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="姓名">
-              <el-input v-model="form.name" />
+          <el-col :span="12">
+            <el-form-item label="处方号">
+              {{ form.prescriptionNo }}
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="诊断">
-              <el-input v-model="form.diagnosis" />
+          <el-col :span="12">
+            <el-form-item label="诊疗项目">
+              {{form.itemCode&& drugOption.find(item => item.drugCode == form.itemCode)?.drugName }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="诊疗编码">
+              {{ form.itemCode }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+          <el-form-item label="检查结果">
+                <el-input type="textarea" v-model="form.itemResult" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+          <el-form-item label="参考值">
+                <el-input type="textarea" v-model="form.referValue" />
             </el-form-item>
           </el-col>
         </el-row>
-
-        <el-table :data="examList" style="width: 100%; margin-top: 20px">
-          <el-table-column prop="examNo" label="档案号" width="120" />
-          <el-table-column prop="name" label="姓名" width="120" />
-          <el-table-column prop="result" label="规格" width="120" />
-          <el-table-column prop="resultStatus" label="是否完成" width="120" />
-        </el-table>
-
-        <div class="exam-detail" style="margin-top: 20px">
-          <div class="exam-type">
-            <el-input v-model="examDetail" placeholder="检验类型" style="width: 400px" />
-            <el-button type="primary" style="margin-left: 10px">药品规格</el-button>
-            <el-button>药品单位</el-button>
-          </div>
-
-          <div class="button-group" style="margin-top: 20px">
-            <el-button size="small">中次用量</el-button>
-            <el-button size="small">规格单位</el-button>
-            <el-button size="small">用药频次</el-button>
-            <el-button size="small">用法</el-button>
-          </div>
-        </div>
+        <el-form-item>
+          <el-button el-button type="primary" @click="saveExamination">保存</el-button>
+        </el-form-item>
       </el-form>
     </el-main>
   </el-container>
 </template>
 
 <script setup>
-import { ref } from 'vue'
 
-const patientListRef = ref(null)
-const examList = ref([])
-const examDetail = ref('')
+import {getList,save,deleteData,update,info } from '@/api/examination'
+import {getList as getPrescriptionList } from '@/api/prescription'
+import { druglist } from '@/api/ward'
 
+const drugOption = ref({})
 const form = ref({
-  patientId: '',
-  name: '',
-  diagnosis: ''
+ itemCode:null,
+ itemResult:null,
+ referValue:null,
+ prescriptionNo:null,
+ zyh:null
 })
+const patientList = ref([])
+const handlePatientSelect = (row) => {
+  form.value = row
+}
+onMounted(()=>{
+  getPrescriptionList({}).then(res=>{
+    patientList.value = res.rows
+  })
+  druglist({}).then(res=>{
+    drugOption.value = res.data
+  })
+})
+function saveExamination(){
+  save(form.value).then(res=>{
+    if(res.code == 0){
+      ElMessage.success('保存成功')
+      form.value = {
+        itemCode:null,
+        itemResult:null,
+        referValue:null,
+        prescriptionNo:null,
+        zyh:null
+      }
+    }else{
+      ElMessage.error('保存失败')
+    }
+  })
+}
 </script>
 
 <style scoped>

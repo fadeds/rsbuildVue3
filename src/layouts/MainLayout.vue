@@ -1,6 +1,25 @@
 <template>
   <el-container class="layout-container">
-    <el-aside width="200px">
+      <el-header height="60px">
+        <div class="header-content">
+          <h2>医院住院管理系统</h2>
+          <div class="user-info">
+            <el-dropdown>
+              <span class="user-dropdown">
+                管理员 <el-icon><ArrowDown /></el-icon>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>个人信息</el-dropdown-item>
+                  <el-dropdown-item>退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </div>
+      </el-header>
+    <el-container>
+       <el-aside width="200px">
       <el-menu
         :default-active="activeMenu"
         class="el-menu-vertical"
@@ -31,37 +50,17 @@
           <span>出院登记</span>
         </el-menu-item>
         <el-menu-item index="/dictionary">
-          <el-icon><Right /></el-icon>
+          <el-icon><Setting /></el-icon>
           <span>字典表维护</span>
         </el-menu-item>
       </el-menu>
     </el-aside>
-    
-    <el-container>
-      <el-header height="60px">
-        <div class="header-content">
-          <h2>医院住院管理系统</h2>
-          <div class="user-info">
-            <el-dropdown>
-              <span class="user-dropdown">
-                管理员 <el-icon><ArrowDown /></el-icon>
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item>个人信息</el-dropdown-item>
-                  <el-dropdown-item>退出登录</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </div>
-        </div>
-      </el-header>
-      
       <el-main>
         <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
+  
 </template>
 
 <script setup>
@@ -74,7 +73,8 @@ import {
   Files,
   List,
   Right,
-  ArrowDown
+  ArrowDown,
+  Setting
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -82,12 +82,17 @@ const activeMenu = computed(() => route.path)
 </script>
 
 <style scoped>
+.el-container{
+  height: 100%;
+  overflow: auto
+}
 .layout-container {
-  height: 100vh;
+  height: 100%;
+  overflow: auto
 }
 
 .el-aside {
-  background-color: #304156;
+  /* background-color: #304156; */
   color: #fff;
 }
 
@@ -121,6 +126,8 @@ const activeMenu = computed(() => route.path)
 .el-main {
   background-color: #f0f2f5;
   padding: 20px;
+  overflow: auto;
+  height: 100%;
 }
 .el-main>div{
   background-color: #fff;

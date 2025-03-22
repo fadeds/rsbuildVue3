@@ -1,15 +1,15 @@
 <template>
   <el-container>
     <el-aside width="400px">
-      <PatientList ref="patientListRef" />
+      <PatientList ref="patientListRef" @selectPatient="selectPatient" />
     </el-aside>
     
     <el-main>
-      <el-form :model="form" label-width="100px" class="admission-form">
+      <el-form ref="formRef" :model="form" label-width="100px" class="admission-form">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="档案号">
-              <el-input v-model="form.patientNo" />
+              <el-input v-model="form.zyh" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -21,7 +21,14 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="性别">
-              <el-input v-model="form.sex" />
+              <el-select v-model="form.sex">
+                <el-option
+                  v-for="item in dicOption.性别"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -33,7 +40,14 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="诊断">
-              <el-input v-model="form.extend" />
+              <el-select v-model="form.diagnosisCode1">
+                <el-option
+                  v-for="item in dicOption.诊断"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -59,7 +73,14 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="科室">
-              <el-input v-model="form.department" />
+              <el-select v-model="form.department">
+                <el-option
+                  v-for="item in dicOption.科室"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -79,22 +100,28 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import {inHospital} from '@/api/admission'
 
 const patientListRef = ref(null)
-
+const formRef = ref(null)
 const form = ref({
-  patientId: '',
-  name: '',
-  diagnosis: '',
-  bedNumber: '',
+  patientNo: '',
+  patientName: '',
+  sex: '',
+  cardNo: '',
+  extend: '',
+  bedNo: '',
   contactHistory: '',
-  medicalHistory: '',
+  history: '',
   department: '',
-  doctor: ''
+  doctor: '',
+  diagnosisCode1: ''
 })
+const dicOption = JSON.parse(localStorage.getItem("dicOption"))
 
+const selectPatient = (row) => {
+  form.value = row
+}
 const handleSubmit = async () => {
   let params = {
     inHospital:{
@@ -106,7 +133,7 @@ const handleSubmit = async () => {
   }
   try{
     const res = await inHospital(params)
-    if(res.code === 200){
+    if(res.code === 0){
       ElMessage.success('保存成功')
       patientListRef.value.getList()
       resetForm()
@@ -117,16 +144,8 @@ const handleSubmit = async () => {
 }
 
 const resetForm = () => {
-  form.value = {
-    patientId: '',
-    name: '',
-    diagnosis: '',
-    bedNumber: '',
-    contactHistory: '',
-    medicalHistory: '',
-    department: '',
-    doctor: ''
-  }
+  formRef.value.resetFields()
+  
 }
 </script>
 

@@ -5,7 +5,7 @@ import { ElMessage } from "element-plus"
 const service = axios.create({
   // 根据环境变量设置baseURL
   // baseURL: import.meta.env.MODE === "development" ? "/api" : "/",
-  timeout: 15000, // 请求超时时间
+  timeout: 60000, // 请求超时时间
   headers: {
     "Content-Type": "application/json;charset=utf-8",
   },
@@ -45,10 +45,10 @@ service.interceptors.request.use(
     const requestKey = generateRequestKey(config)
 
     // 如果存在相同请求，则取消之前的请求
-    if (pendingRequests.has(requestKey)) {
-      const { controller } = pendingRequests.get(requestKey)
-      controller.abort()
-    }
+    // if (pendingRequests.has(requestKey)) {
+    //   const { controller } = pendingRequests.get(requestKey)
+    //   controller.abort()
+    // }
 
     // 创建新的AbortController
     const controller = new AbortController()
@@ -92,7 +92,7 @@ service.interceptors.response.use(
       ElMessage({
         message: res.message || "请求失败",
         type: "error",
-        duration: 5 * 1000,
+        duration: 20 * 1000,
       })
 
       // 处理特定错误码

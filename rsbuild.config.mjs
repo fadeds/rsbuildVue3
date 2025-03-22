@@ -89,7 +89,8 @@ export default defineConfig(({ env, command, envMode }) => {
       htmlFallback: "index", // 默认情况下，当请求满足以下条件且未找到对应资源时，会回退到 index.html
       proxy: {
         "/app": {
-          target: "http://47.92.117.5:8080/renren-fast/",
+          target: "http://47.92.117.5:12345/renren-fast/",
+          // target: "https://68215bfc.r16.vip.cpolar.cn/renren-fast/",
           changeOrigin: true,
           // rewrite: (path) => path.replace(/^\/api/, "/app"),
         },
