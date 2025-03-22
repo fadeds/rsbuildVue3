@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-aside width="400px">
-      <PatientList @selectPatient="handlePatientSelect" />
+      <PatientList inHospital @selectPatient="handlePatientSelect" />
     </el-aside>
     <el-main>
       <PatientInfo :patient-info="currentPatient" />
@@ -38,10 +38,10 @@
             </template>
           </el-table-column>
           <el-table-column label="数量"  prop="count" width="100"/>
-          <el-table-column prop="operation" label="操作" width="100">
+          <el-table-column prop="operation" label="操作" width="120">
             <template #default="scope">
-              <el-button link @click="handleExecute(scope.row)">执行</el-button>
-              <el-button link @click="handleStop(scope.row)">停止</el-button>
+              <el-button type="primary" link @click="handleExecute(scope.row)">执行</el-button>
+              <el-button type="danger" link @click="handleStop(scope.row)">停止</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -153,14 +153,13 @@ const initDrugList = async () => {
 
 <style scoped>
 .el-main{
-  padding: 0;
   margin: 20px;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
   background-color: #fff;
 }
 .order-content {
   /* margin-top: 20px; */
-  padding: 20px;
+  /* padding: 20px; */
   background-color: #fff;
   border-radius: 4px;
   /* box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1); */

@@ -1,12 +1,12 @@
 <template>
   <el-container>
     <el-aside width="400px">
-      <PatientList ref="patientListRef" @selectPatient="selectPatient" />
+      <PatientList ref="patientListRef" inHospital @selectPatient="selectPatient" />
     </el-aside>
 
     <el-main>
         <PatientInfo :patient-info="form" />
-        <el-table :data="orderListWard" style="width: 100%" max-height="500">
+        <el-table :data="orderListWard" style="width: 100%" border>
           <el-table-column label="医嘱类型" prop="adviceType" width="120">
             <template #default="scope">
               {{dicOption.医嘱类型.find(item => item.code == scope.row.adviceType)?.name}}
@@ -42,104 +42,120 @@
         <br>
         <div class="table-operations">
           <el-button type="primary" @click="handleAdd">新增医嘱</el-button>
-          <el-button @click="handleBatchDelete">批量删除</el-button>
+          <el-button type="danger" @click="handleBatchDelete">批量删除</el-button>
         </div>
 
-        <el-table 
-          :data="orderList" 
-          style="width: 100%" 
-          max-height="500"
-          @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" />
-          <el-table-column label="医嘱类型" width="120">
-            <template #default="scope">
-              <el-select v-model="scope.row.adviceType" placeholder="医嘱类型" size="small">
-                <el-option
-                  v-for="item in dicOption.医嘱类型"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code"
-                />
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="项目类型" width="120">
-            <template #default="scope">
-              <el-select v-model="scope.row.itemType" placeholder="项目类型" size="small" @change="(val) => itemTypeChange(val, scope.$index)">
-                <el-option
-                  v-for="item in dicOption.项目类型"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code"
-                />
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="药品名称" >
-            <template #default="scope">
-              <el-select 
-                v-model="scope.row.itemCode" 
-                placeholder="药品名称" 
-                size="small"
-                @change="drugChange(scope.row.itemCode, scope.$index)">
-                <el-option
-                  v-for="item in (drugMedical[scope.row.itemType] || [])"
-                  :key="item.drugCode"
-                  :label="item.drugName"
-                  :value="item.drugCode"
-                />
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="用药频次" >
-            <template #default="scope">
-              <el-select v-model="scope.row.frequency" placeholder="用药频次" size="small">
-                <el-option
-                  v-for="item in dicOption.频次"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code"
-                />
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="用法" >
-            <template #default="scope">
-              <el-select v-model="scope.row.usageCode" placeholder="用法" size="small">
-                <el-option
-                  v-for="item in dicOption.用法"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code"
-                />
-              </el-select>
-            </template>
-          </el-table-column>
-          <el-table-column label="数量" width="100">
-            <template #default="scope">
-              <el-input-number 
-                v-model="scope.row.count" 
-                :min="0" 
-                size="small"
-                controls-position="right" />
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="120">
-            <template #default="scope">
-              <el-button 
-                type="danger" 
-                size="small" 
-                @click="handleDelete(scope.$index)">
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-form ref="orderFormRef" :model="orderList" :rules="rules">
+          <el-table 
+            :data="orderList" 
+            style="width: 100%" 
+            border
+            @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55" />
+            <el-table-column label="医嘱类型" width="120">
+              <template #default="scope">
+                <el-form-item :prop="''+scope.$index+'.adviceType'" :rules="rules.adviceType">
+                  <el-select v-model="scope.row.adviceType" placeholder="医嘱类型" size="small">
+                    <el-option
+                      v-for="item in dicOption.医嘱类型"
+                      :key="item.code"
+                      :label="item.name"
+                      :value="item.code"
+                    />
+                  </el-select>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="项目类型" width="120">
+              <template #default="scope">
+                <el-form-item :prop="''+scope.$index+'.itemType'" :rules="rules.itemType">
+                  <el-select v-model="scope.row.itemType" placeholder="项目类型" size="small" @change="(val) => itemTypeChange(val, scope.$index)">
+                    <el-option
+                      v-for="item in dicOption.项目类型"
+                      :key="item.code"
+                      :label="item.name"
+                      :value="item.code"
+                    />
+                  </el-select>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="药品名称" >
+              <template #default="scope">
+                <el-form-item :prop="''+scope.$index+'.itemCode'" :rules="rules.itemCode">
+                  <el-select 
+                    v-model="scope.row.itemCode" 
+                    placeholder="药品名称" 
+                    size="small"
+                    @change="drugChange(scope.row.itemCode, scope.$index)">
+                    <el-option
+                      v-for="item in (drugMedical[scope.row.itemType] || [])"
+                      :key="item.drugCode"
+                      :label="item.drugName"
+                      :value="item.drugCode"
+                    />
+                  </el-select>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="用药频次" >
+              <template #default="scope">
+                <el-form-item :prop="''+scope.$index+'.frequency'" :rules="rules.frequency">
+                  <el-select v-model="scope.row.frequency" placeholder="用药频次" size="small">
+                    <el-option
+                      v-for="item in dicOption.频次"
+                      :key="item.code"
+                      :label="item.name"
+                      :value="item.code"
+                    />
+                  </el-select>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="用法" >
+              <template #default="scope">
+                <el-form-item :prop="''+scope.$index+'.usageCode'" :rules="rules.usageCode">
+                  <el-select v-model="scope.row.usageCode" placeholder="用法" size="small">
+                    <el-option
+                      v-for="item in dicOption.用法"
+                      :key="item.code"
+                      :label="item.name"
+                      :value="item.code"
+                    />
+                  </el-select>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="数量" width="100">
+              <template #default="scope">
+                <el-form-item :prop="''+scope.$index+'.count'" :rules="rules.count">
+                  <el-input-number 
+                    v-model="scope.row.count" 
+                    :min="0.01" 
+                    :precision="2"
+                    :step="0.1"
+                    size="small"
+                    controls-position="right" />
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="120">
+              <template #default="scope">
+                <el-button 
+                  type="danger" 
+                  size="small" 
+                  @click="handleDelete(scope.$index)">
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
 
-        <div class="action-buttons">
-          <el-button type="primary" @click="handleSubmit">保存医嘱</el-button>
-          <el-button @click="handleReset">重置</el-button>
-        </div>
+          <div class="action-buttons">
+            <el-button type="primary" @click="handleSubmit">保存医嘱</el-button>
+            <el-button @click="handleReset">重置</el-button>
+          </div>
+        </el-form>
     </el-main>
   </el-container>
 </template>
@@ -150,9 +166,22 @@ import { getdrugMedical } from "@/api/index"
 import { getList, save,getId, deleteData, update, info,druglist } from '@/api/ward'
 
 const patientListRef = ref(null)
+const orderFormRef = ref(null)
 const orderList = ref([])
 const orderListWard = ref([])
 const selectedRows = ref([])
+
+const rules = {
+  adviceType: [{ required: true, message: '请选择医嘱类型', trigger: 'change' }],
+  itemType: [{ required: true, message: '请选择项目类型', trigger: 'change' }],
+  itemCode: [{ required: true, message: '请选择药品名称', trigger: 'change' }],
+  frequency: [{ required: true, message: '请选择用药频次', trigger: 'change' }],
+  usageCode: [{ required: true, message: '请选择用法', trigger: 'change' }],
+  count: [
+    { required: true, message: '请输入数量', trigger: 'blur' },
+    { type: 'number', min: 0.01, message: '数量必须大于0', trigger: 'blur' }
+  ]
+}
 
 const form = ref({
   patientId: "",
@@ -260,7 +289,9 @@ const handleSubmit = async () => {
   }
   
   try {
-   
+    // 表单验证
+    await orderFormRef.value.validate()
+    
     let res = await getId()
     orderList.value.forEach(item => {
       item.adviceNo = res.seq
@@ -274,14 +305,19 @@ const handleSubmit = async () => {
     orderList.value = []
     getOrderList()
   } catch (error) {
-    console.error('保存失败:', error)
-    ElMessage.error('保存失败')
+    if (error === false) {
+      ElMessage.warning('请完善表单信息')
+    } else {
+      console.error('保存失败:', error)
+      ElMessage.error('保存失败')
+    }
   }
 }
 
 // 重置
 const handleReset = () => {
   orderList.value = []
+  orderFormRef.value?.resetFields()
 }
 
 // 初始化

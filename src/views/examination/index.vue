@@ -4,13 +4,19 @@
       <!-- <PatientList ref="patientListRef" /> -->
       <PrescriptionList @selectPatient="handlePatientSelect" />
     </el-aside>
-    
+
     <el-main>
-      <el-form :model="form" label-width="100px" class="examination-form">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+        class="examination-form"
+      >
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="住院号">
-               {{ form.zyh }}
+              {{ form.zyh }}
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -20,7 +26,11 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="诊疗项目">
-              {{form.itemCode&& drugOption.find(item => item.drugCode == form.itemCode)?.drugName }}
+              {{
+                form.itemCode &&
+                drugOption.find((item) => item.drugCode == form.itemCode)
+                  ?.drugName
+              }}
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -29,18 +39,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-          <el-form-item label="检查结果">
-                <el-input type="textarea" v-model="form.itemResult" />
+            <el-form-item label="检查结果" prop="itemResult">
+              <el-input type="textarea" v-model="form.itemResult" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-          <el-form-item label="参考值">
-                <el-input type="textarea" v-model="form.referValue" />
+            <el-form-item label="参考值" prop="referValue">
+              <el-input type="textarea" v-model="form.referValue" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item>
-          <el-button el-button type="primary" @click="saveExamination">保存</el-button>
+          <el-button el-button type="primary" @click="saveExamination"
+            >保存</el-button
+          >
         </el-form-item>
       </el-form>
     </el-main>
@@ -48,44 +60,55 @@
 </template>
 
 <script setup>
-
-import {getList,save,deleteData,update,info } from '@/api/examination'
-import {getList as getPrescriptionList } from '@/api/prescription'
-import { druglist } from '@/api/ward'
+import { getList, save, deleteData, update, info } from "@/api/examination"
+import { getList as getPrescriptionList } from "@/api/prescription"
+import { druglist } from "@/api/ward"
 
 const drugOption = ref({})
+const formRef = ref(null)
 const form = ref({
- itemCode:null,
- itemResult:null,
- referValue:null,
- prescriptionNo:null,
- zyh:null
+  itemCode: null,
+  itemResult: null,
+  referValue: null,
+  prescriptionNo: null,
+  zyh: null,
+})
+const rules = ref({
+  itemResult: [{ required: true, message: "请输入检查结果", trigger: "blur" }],
+  referValue: [{ required: true, message: "请输入参考值", trigger: "blur" }],
 })
 const patientList = ref([])
 const handlePatientSelect = (row) => {
   form.value = row
 }
-onMounted(()=>{
-  getPrescriptionList({}).then(res=>{
+onMounted(() => {
+  getPrescriptionList({}).then((res) => {
     patientList.value = res.rows
   })
-  druglist({}).then(res=>{
+  druglist({}).then((res) => {
     drugOption.value = res.data
   })
 })
-function saveExamination(){
-  save(form.value).then(res=>{
-    if(res.code == 0){
-      ElMessage.success('保存成功')
-      form.value = {
-        itemCode:null,
-        itemResult:null,
-        referValue:null,
-        prescriptionNo:null,
-        zyh:null
+function saveExamination() {
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      let params = {
+        ...form.value,
       }
-    }else{
-      ElMessage.error('保存失败')
+      save(params).then((res) => {
+        if (res.code == 0) {
+          ElMessage.success("保存成功")
+          form.value = {
+            itemCode: null,
+            itemResult: null,
+            referValue: null,
+            prescriptionNo: null,
+            zyh: null,
+          }
+        } else {
+          ElMessage.error("保存失败")
+        }
+      })
     }
   })
 }
@@ -96,7 +119,7 @@ function saveExamination(){
   padding: 20px;
   background-color: #fff;
   border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
 .exam-detail {

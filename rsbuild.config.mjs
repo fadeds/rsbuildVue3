@@ -7,14 +7,11 @@ import { pluginVue } from '@rsbuild/plugin-vue';
 import AutoImport from 'unplugin-auto-import/rspack';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import AutoComponents from 'unplugin-vue-components/rspack';
-
-console.log('BASE_URL:', import.meta.env.BASE_URL);
-
+console.log(process.env.BASEURL)
 export default defineConfig(({ env, command, envMode }) => {
   console.log('env:', env);
-  console.log('command:', command);
-  console.log('envMode:', envMode);
-
+  // console.log('command:', command);
+  // console.log('envMode:', envMode);
   return {
     // root: './foo', 指定项目根目录， 默认为 process.cwd()
     // mode 本项目通过 process.env.NODE_ENV 设置

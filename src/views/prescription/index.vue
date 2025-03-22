@@ -57,7 +57,6 @@ const dicOption = JSON.parse(localStorage.getItem('dicOption'))
 // 搜索患者
 const handlePatientSelect = (row) => {
   // 实现搜索逻辑
-  console.log(row)
   getPrescriptionList(row.zyh)
 }
 
@@ -70,10 +69,6 @@ const getPrescriptionList = async(zyh) => {
   }
 }
 onMounted(()=>{
-  // getPrescriptionList()
-  getList({}).then(res=>{
-    console.log(res.rows)
-  })
   druglist({}).then(res=>{
     drugOption.value = res.data
   })

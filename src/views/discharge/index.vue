@@ -21,11 +21,17 @@
           <el-table-column prop="zyh" label="住院号" />
           <el-table-column prop="patientName" label="患者姓名" />
           <el-table-column prop="diagnosisName1" label="诊断">
-           
+            <template #default="scope"> 
+              {{ dicOption.诊断.find(item => item.code == scope.row.diagnosisCode1)?.name }}
+            </template>
           </el-table-column>
-          <el-table-column prop="department" label="科室" />
-          <el-table-column prop="doctorInfo" label="住院医生" />
-          <el-table-column prop="cyTime" label="出院时间" />
+          <el-table-column prop="department" label="科室" >
+            <template #default="scope"> 
+              {{ dicOption.科室.find(item => item.code == scope.row.department)?.name }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="doctor" label="主治医生" />
+          <el-table-column prop="zyTime" label="入院时间" />
           <el-table-column label="操作" width="120">
             <template #default="scope">
               <el-button type="primary" @click="handleDischarge(scope.row)"
@@ -42,6 +48,7 @@
 <script setup>
 import { onMounted, ref } from "vue"
 import { getList, save, deleteData, update, info } from "@/api/discharge"
+const dicOption = JSON.parse(localStorage.getItem("dicOption"))
 
 const searchForm = ref({
   zyh: "",
@@ -69,7 +76,6 @@ async function handleDischarge(row) {
 }
 const handleSearch = () => {
   // 实现搜索逻辑
-  // console.log('搜索条件：', searchForm.value)
   initList()
 }
 onMounted(() => {

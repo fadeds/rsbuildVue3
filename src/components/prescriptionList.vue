@@ -26,7 +26,7 @@ import { druglist } from '@/api/ward'
 const zyh = ref(null)
 const patientList = ref([])
 const emit = defineEmits(['selectPatient'])
-const dicOption = ref({})
+const dicOption = ref([])
 onMounted(() => {
   // 获取患者列表
   initList()
