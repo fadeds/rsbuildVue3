@@ -90,6 +90,7 @@ export default defineConfig(({ env, command, envMode }) => {
           // target: "https://68215bfc.r16.vip.cpolar.cn/renren-fast/",
           changeOrigin: true,
           // rewrite: (path) => path.replace(/^\/api/, "/app"),
+          logLevel: 'debug', // 启用代理日志输出
         },
       },
     },

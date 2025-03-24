@@ -49,6 +49,11 @@
           <el-icon><Right /></el-icon>
           <span>出院登记</span>
         </el-menu-item>
+        <el-menu-item index="/bedInfo">
+          <!-- <el-icon><List /></el-icon> -->
+          <el-icon><Memo /></el-icon>
+          <span>床位情况</span>
+        </el-menu-item>
         <el-menu-item index="/dictionary">
           <el-icon><Setting /></el-icon>
           <span>字典表维护</span>
@@ -74,7 +79,8 @@ import {
   List,
   Right,
   ArrowDown,
-  Setting
+  Setting,
+  Memo
 } from '@element-plus/icons-vue'
 
 const route = useRoute()

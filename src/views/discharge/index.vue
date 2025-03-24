@@ -52,6 +52,7 @@ const dicOption = JSON.parse(localStorage.getItem("dicOption"))
 
 const searchForm = ref({
   zyh: "",
+  isIn: 1
 })
 
 const patientList = ref([])

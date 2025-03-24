@@ -17,8 +17,6 @@
               <el-input v-model="form.patientName" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="性别" prop="sex">
               <el-select v-model="form.sex">
@@ -36,9 +34,33 @@
               <el-input v-model="form.cardNo" />
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="20">
+          
           <el-col :span="12">
+            <el-form-item label="科室" prop="department">
+              <el-select v-model="form.department" @change="handleDepartmentChange">
+                <el-option
+                  v-for="item in dicOption.科室"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="床位号" prop="bedNo">
+              <el-select v-model="form.bedNo">
+                <el-option
+                  v-for="item in bedList"
+                  :key="item.bed"
+                  :label="item.bed"
+                  :value="item.bed"
+                  :disabled="item.bedCode == '1'"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+<el-col :span="12">
             <el-form-item label="诊断" prop="diagnosisCode1">
               <el-select v-model="form.diagnosisCode1">
                 <el-option
@@ -51,21 +73,6 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="床位号" prop="bedNo">
-              <el-select v-model="form.bedNo">
-                <el-option
-                  v-for="item in dicOption.床位"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row :gutter="20">
-          <el-col :span="12">
             <el-form-item label="过敏史" prop="contactHistory">
               <el-input v-model="form.contactHistory" />
             </el-form-item>
@@ -75,21 +82,8 @@
               <el-input v-model="form.history" />
             </el-form-item>
           </el-col>
-        </el-row>
 
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="科室" prop="department">
-              <el-select v-model="form.department">
-                <el-option
-                  v-for="item in dicOption.科室"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
+          
           <el-col :span="12">
             <el-form-item label="主治医生" prop="doctor">
               <el-input v-model="form.doctor" />
@@ -108,6 +102,7 @@
 
 <script setup>
 import {inHospital} from '@/api/admission'
+import { getBedList } from "@/api/bedInfo"
 
 const patientListRef = ref(null)
 const formRef = ref(null)
@@ -129,7 +124,7 @@ const rules = ref({
   patientName: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
   sex: [{ required: true, message: '请选择性别', trigger: 'change' }],
   cardNo: [{ required: true, message: '请输入证件号', trigger: 'blur' }],
-  bedNo: [{ required: true, message: '请输入床位号', trigger: 'blur' }],
+  bedNo: [{ required: true, message: '请选择床位号', trigger: 'change' }],
   department: [{ required: true, message: '请选择科室', trigger: 'change' }],
   doctor: [{ required: true, message: '请输入主治医生', trigger: 'blur' }],
   diagnosisCode1: [{ required: true, message: '请选择诊断', trigger: 'change' }],
@@ -140,9 +135,17 @@ const rules = ref({
   zyh: [{ required: true, message: '请输入档案号', trigger: 'blur' }],
 })
 const dicOption = JSON.parse(localStorage.getItem("dicOption"))
-
+const bedList = ref([])
+const bedListFilter = ref([])
+async function initBedList() {
+  const res = await getBedList({})
+  bedListFilter.value = res.row
+} 
 const selectPatient = (row) => {
   form.value = row
+}
+const handleDepartmentChange = (val) => {
+  bedList.value = bedListFilter.value.filter(item => item.department == val)
 }
 const handleSubmit =  () => {
   formRef.value.validate(async(valid) => {
@@ -173,6 +176,9 @@ const resetForm = () => {
   formRef.value.resetFields()
   
 }
+onMounted(() => {
+  initBedList()
+})
 </script>
 
 <style scoped>
