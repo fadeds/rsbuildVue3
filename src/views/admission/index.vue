@@ -145,7 +145,7 @@ const selectPatient = (row) => {
   form.value = row
 }
 const handleDepartmentChange = (val) => {
-  bedList.value = bedListFilter.value.filter(item => item.department == val)
+  bedList.value = bedListFilter.value.filter(item => item.department == val&&item.bedCode == '0')
 }
 const handleSubmit =  () => {
   formRef.value.validate(async(valid) => {
@@ -164,6 +164,7 @@ const handleSubmit =  () => {
           ElMessage.success('保存成功')
           patientListRef.value.getList()
           resetForm()
+          initBedList()
         }
       }catch(e){
         ElMessage.error('保存失败')

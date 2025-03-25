@@ -51,7 +51,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="zyh" label="住院号" />
-          <el-table-column prop="cyTime" label="出院时间" />
+          <el-table-column prop="zyTime" label="住院时间" />
           <el-table-column prop="bedCode" label="床位使用情况" >
             <template #default="scope">
               {{ scope.row.bedCode&&dicOption.床位占用情况.find(item => item.code == scope.row.bedCode)?.name }}
