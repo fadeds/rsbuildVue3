@@ -1,10 +1,9 @@
 import axios from "axios"
 import { ElMessage } from "element-plus"
-console.log(import.meta.env.BASEURL)
 // 创建axios实例
 const service = axios.create({
   // 根据环境变量设置baseURL BASEURL
-  baseURL: import.meta.env.MODE === "development" ? "/" : "http://47.92.117.5:12345/renren-fast/",
+  // baseURL: import.meta.env.MODE === "development" ? "/" : "http://47.92.117.5:12345/renren-fast/",
   timeout: 60000, // 请求超时时间
   headers: {
     "Content-Type": "application/json;charset=utf-8",

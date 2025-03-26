@@ -10,9 +10,9 @@
       <el-table-column prop="patientName" label="姓名" width="100" />
       <el-table-column prop="cardNo" label="证件号" width="100" />
       <el-table-column prop="bedNo" label="床位号" width="100">
-        <template #default="scope">
-          {{ dicOption.床位.find(item => item.code == scope.row.bedNo)?.name }}
-        </template>
+        <!-- <template #default="scope">
+          {{ bedList.find(item => item.bed == scope.row.bedNo)?.bed }}
+        </template> -->
       </el-table-column>
       <el-table-column prop="department" label="科室">
         <template #default="scope">
@@ -26,6 +26,11 @@
 <script setup>
 import {getList,getHospitalList,save,deleteData,update,info } from '@/api/patientinfo.js'
 const dicOption = JSON.parse(localStorage.getItem("dicOption"))
+// import { getBedList } from "@/api/bedInfo"
+// const bedList = ref([])
+// getBedList().then(res => {
+//   bedList.value = res.row
+// })
 const props = defineProps({
   inHospital: {
     type: Boolean,
