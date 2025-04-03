@@ -41,7 +41,7 @@
       </el-table-column>
     </el-table>
 
-    <div class="pagination-container">
+    <!-- <div class="pagination-container">
       <el-pagination
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
@@ -51,7 +51,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </div>
+    </div> -->
 
     <!-- 字典表单对话框 -->
     <el-dialog
