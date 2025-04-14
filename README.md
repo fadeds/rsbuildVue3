@@ -5,6 +5,9 @@
 Install the dependencies:
 
 ```bash
+需先安装nodejs 20.0+ 依次运行下面命令
+
+npm i cnpm -g
 pnpm install
 ```
 
